@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="mapbox-token" content="__MAPBOX_PUBLIC_TOKEN__">
+  <title>Bikewatching | Boston & Cambridge</title>
+  <link rel="icon" href="./bike.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" defer></script>
+  <script type="module" src="./map.mjs"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">BLUEBIKES · MARCH 2024</p>
+        <h1>Bikewatching</h1>
+        <p class="intro">Explore how bike traffic moves across Boston and Cambridge throughout the day.</p>
+      </div>
+      <div class="filter">
+        <label for="time">Time of day <output id="selected-time" for="time">Any time</output></label>
+        <input id="time" type="range" min="-1" max="1439" step="1" value="-1" aria-describedby="time-help" disabled>
+        <div id="time-help"><span>Any time</span><span>±1 hour around selected time</span></div>
+      </div>
+    </header>
+    <section class="map-frame" aria-label="Bluebikes station traffic">
+      <div id="map" aria-label="Interactive map of Boston and Cambridge"></div>
+      <svg id="stations" aria-label="Bluebikes stations"></svg>
+      <p id="status" role="status">Loading map and ride data…</p>
+      <div id="tooltip" role="tooltip" hidden></div>
+    </section>
+    <footer>
+      <div class="legend" aria-label="Map legend">
+        <span><i class="swatch arrivals"></i>More arrivals</span>
+        <span><i class="swatch balanced"></i>Balanced</span>
+        <span><i class="swatch departures"></i>More departures</span>
+        <span><i class="swatch lanes"></i>Bike routes</span>
+      </div>
+      <p>Circle area shows total traffic. Hover over a station for trip counts.</p>
+      <p class="source">Data from <a href="https://bluebikes.com/system-data">Bluebikes</a> and the cities of Boston and Cambridge.</p>
+    </footer>
+  </main>
+</body>
+</html>
