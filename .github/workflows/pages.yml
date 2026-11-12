@@ -1,0 +1,48 @@
+
+name: Deploy Bikewatching
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - name: Prepare website
+        env:
+          MAPBOX_PUBLIC_TOKEN: ${{ vars.MAPBOX_PUBLIC_TOKEN }}
+        run: |
+          mkdir -p _site
+          cp index.html map.mjs traffic.mjs style.css bike.svg _site/
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          import re
+
+          token = os.environ["MAPBOX_PUBLIC_TOKEN"]
+          if not re.fullmatch(r"pk\.[A-Za-z0-9_.-]+", token):
+              raise SystemExit("Set the MAPBOX_PUBLIC_TOKEN repository variable.")
+          path = Path("_site/index.html")
+          source = path.read_text()
+          if source.count("__MAPBOX_PUBLIC_TOKEN__") != 1:
+              raise SystemExit("Mapbox token placeholder is missing or duplicated.")
+          path.write_text(source.replace("__MAPBOX_PUBLIC_TOKEN__", token))
+          PY
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
